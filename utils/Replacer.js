@@ -8,6 +8,11 @@ const tags = [
         open_tag: /^\{\{/,
         close_tag: /\}\}$/,
         resolver: function(data) {
+            // escape double quote            
+            for (let[key,value] of Object.entries(data)) {
+                data[key] = value.replace(/\"/g,'\\\"')
+            }
+
             return (tag) => _.get(data, tag_cleaner(tag, this.open_tag, this.close_tag))
         }
     }
@@ -21,6 +26,8 @@ const tags = [
  */
 const replace = (text, source_data = {}) => {
     let new_text = text + ''
+
+
 
     tags.forEach(ftag => {
         new_text = new_text.replace(ftag.tag, ftag.resolver(source_data))
